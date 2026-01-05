@@ -1,5 +1,5 @@
 package Objects;
-import processing.core.*;
+import processing.core.PApplet;
 
 /**
  *
@@ -16,13 +16,29 @@ public class Bullet {
     private int speed = 0;
     private int accelerationSpeed = 0;
     private int damage = 0;
-    private int size = 0;
+    private int radius = 0;
     
     // core
-    private PApplet app;
-    private PImage image;
+    private final PApplet app;
+    private final BulletPool pool;
     
-    public Bullet() {
+    public Bullet(PApplet app, BulletPool pool) {
+        this.app = app;
+        this.pool = pool;
+    }
+    
+    public void update() {
         
+    }
+    
+    public void draw() {
+        app.circle(x, y, radius);
+    }
+    
+    /*
+    Recalls this object to its inactive pool. See BulletPool.java
+    */
+    public void Kill() {
+        pool.Recall(this);
     }
 }

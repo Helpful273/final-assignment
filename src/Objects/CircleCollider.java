@@ -1,5 +1,6 @@
 package Objects;
 import processing.core.*;
+import Utils.*;
 
 /**
  *
@@ -65,6 +66,14 @@ public class CircleCollider {
     }
     
     /*
+    Returns the radius property of the collider.
+    @return The radius.
+    */
+    public int getRadius() {
+        return radius;
+    }
+    
+    /*
     Draws the collider.
     */
     public void draw() {
@@ -72,8 +81,11 @@ public class CircleCollider {
         app.circle(x, y, radius);
     }
     
-    
+    /*
+    Checks if two colliders are colliding.
+    @return If the other collider is in contact with this collider.
+    */
     public boolean isColliding(CircleCollider other) {
-        return true;
+        return Vector2.GetDistance(x, y, other.x, other.y) < radius + other.getRadius();
     } 
 }

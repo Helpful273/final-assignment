@@ -34,6 +34,18 @@ public class BulletPool {
         this(app, DEFAULT_INIT_POOL_SIZE);
     }
     
+    public void update() {
+        for (Bullet bullet: _activeBullets) {
+            bullet.update();
+        }
+    }
+    
+    public void draw() {
+        for (Bullet bullet: _activeBullets) {
+            bullet.draw();
+        }
+    }
+    
     /*
     Recalls all bullets in the pool, setting them to an inactive state. 
     */

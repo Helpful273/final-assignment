@@ -8,13 +8,18 @@ import java.util.NoSuchElementException;
  * @author Helpful273
  */
 public class BulletPool {
+    // DEFAULTS
+    private final static int DEFAULT_INSTANCE_POSITION = -100;
+    private final static int DEFAULT_INIT_POOL_SIZE = 100;
+    
+    // core
     private final PApplet app;
     private final ArrayList<Bullet> _activeBullets = new ArrayList();
     private final ArrayList<Bullet> _inactiveBullets = new ArrayList();
-    private final static int DEFAULT_INIT_POOL_SIZE = 100;
     
     /*
     Creates a new pool of bullets.
+    @param app The parent applet.
     @param initialAmount The initial amount of bullets to be loaded into the
     cache.
     */
@@ -29,17 +34,24 @@ public class BulletPool {
     
     /*
     Creates a new pool of bullets.
+    @param app The parent applet.
     */
     public BulletPool(PApplet app) {
         this(app, DEFAULT_INIT_POOL_SIZE);
     }
     
+    /*
+    Updates all bullets in the active bullet pool.
+    */
     public void update() {
         for (Bullet bullet: _activeBullets) {
             bullet.update();
         }
     }
     
+    /*
+    Draws all bullets in the active bullet pool.
+    */
     public void draw() {
         for (Bullet bullet: _activeBullets) {
             bullet.draw();
@@ -49,16 +61,18 @@ public class BulletPool {
     /*
     Recalls all bullets in the pool, setting them to an inactive state. 
     */
-    public void Recall() {
-        _inactiveBullets.addAll(_activeBullets);
-        _inactiveBullets.clear();
+    public void recall() {
+        for (Bullet bullet: _activeBullets) {
+            recall(bullet);
+        }
     }
     
     /*
     Recalls a bullet in the pool, setting them to an inactive state.
     @param bullet The bullet object to recall.
     */
-    public void Recall(Bullet bullet) {
+    public void recall(Bullet bullet) {
+        bullet.moveTo(DEFAULT_INSTANCE_POSITION, DEFAULT_INSTANCE_POSITION);
         _inactiveBullets.add(bullet);
         _inactiveBullets.remove(bullet);
     }
@@ -67,7 +81,7 @@ public class BulletPool {
     Fetches the first inactive Bullet. When trying to fetch a Bullet and none
     are available, a new Bullet instantiated instead.
     */
-    public Bullet GetBullet() {
+    public Bullet getBullet() {
         Bullet fetchedBullet;
         
         try {

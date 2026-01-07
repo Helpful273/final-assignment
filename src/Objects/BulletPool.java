@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * @author Helpful273
  */
 public class BulletPool {
-    // DEFAULTS
+    // CONSTANTS
     private final static int DEFAULT_INSTANCE_POSITION = -100;
     private final static int DEFAULT_INIT_POOL_SIZE = 100;
     
@@ -46,6 +46,10 @@ public class BulletPool {
     public void update() {
         for (Bullet bullet: _activeBullets) {
             bullet.update();
+            
+            if (!bullet.inBounds()) {
+                bullet.kill();
+            }
         }
     }
     
@@ -92,6 +96,8 @@ public class BulletPool {
         } catch(NoSuchElementException e) {
             // Create new Bullet
             fetchedBullet = new Bullet(app, this);
+            
+            System.out.println(_inactiveBullets.size() + _activeBullets.size() + " wa wa");
         } 
         
         // Add Bullet to active pool.

@@ -7,7 +7,7 @@ import processing.core.PApplet;
  * @author Helpful273
  */
 public class Bullet extends CircleCollider {
-    // DEFAULTS
+    // CONSTANTS
     private final static int DEFAULT_POSITION = -100;
     private final static int DEFAULT_RADIUS = 3;
     /* 
@@ -47,6 +47,14 @@ public class Bullet extends CircleCollider {
     }
     
     /*
+    Updates the rotation property of the bullet.
+    @param rot The new rotation of the bullet.
+    */
+    public void setRotation(int rot) {
+        this.rot = rot;
+    }
+    
+    /*
     Updates the rotation speed property of the bullet.
     @param speed The new rotation speed of the bullet.
     */
@@ -66,7 +74,7 @@ public class Bullet extends CircleCollider {
     Updates the bullet.
     */
     public void update() {
-        int[] vector = Vector2.RotateVector(DEFAULT_MOVE_INCREMENT, 0, rot);
+        int[] vector = Vector2.RotateVector(DEFAULT_MOVE_INCREMENT * speed, 0, rot);
         
         x += vector[0];
         y += vector[1];

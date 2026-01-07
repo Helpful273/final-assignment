@@ -7,7 +7,7 @@ import Utils.*;
  * @author Helpful273
  */
 public class CircleCollider {
-    // DEFAULTS
+    // CONSTANTS
     private final static int DEFAULT_COLOUR = 100;
     
     // position
@@ -35,19 +35,6 @@ public class CircleCollider {
     }
     
     /*
-    Constructor for circle collider.
-    @param app The parent applet.
-    @param x The initial x position.
-    @param y The initial y position.
-    @param radius The initial radius.
-    @param colourRGB The colour the collider will use when drawn in RGB format.
-    */
-    public CircleCollider(PApplet app, int x, int y, int radius, int[] colourRGB) {
-        this(app, x, y, radius);
-        this.colourRGB = colourRGB;
-    }
-    
-    /*
     Moves the collider to a new position.
     @param x The new x position.
     @param y The new y position.
@@ -59,10 +46,18 @@ public class CircleCollider {
     
     /*
     Updates the radius property of the collider.
-    @param The new radius of the collider
+    @param radius The new radius of the collider.
     */
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+    
+    /*
+    Updates the colour property of the collider.
+    @param colourRGB The colour in an RGB format.
+    */
+    public void setColour(int[] colourRGB) {
+        this.colourRGB = colourRGB;
     }
     
     /*
@@ -87,5 +82,13 @@ public class CircleCollider {
     */
     public boolean isColliding(CircleCollider other) {
         return Vector2.GetDistance(x, y, other.x, other.y) < radius + other.getRadius();
-    } 
+    }
+    
+    /*
+    Checks if the collider is in screen bounds.
+    @return If the collider is within screen bounds.
+    */
+    public boolean inBounds() {
+        return x > 0 && x < app.displayWidth && y > 0 && y < app.displayHeight;
+    }
 }

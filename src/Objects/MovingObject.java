@@ -1,0 +1,168 @@
+package Objects;
+import processing.core.*;
+import Utils.*;
+
+/**
+ *
+ * @author Helpful273
+ */
+public class MovingObject {
+    // CONSTANTS
+    private final static int DEFAULT_COLOUR = 100;
+    
+    // position
+    public int x, y;
+    private int targetX, targetY;
+    private boolean moveFlag = false;
+    private boolean targetReached = false;
+    
+    // collider properties
+    private int radius;
+    private int[] colourRGB = {DEFAULT_COLOUR, DEFAULT_COLOUR, DEFAULT_COLOUR};
+    private int speed = 0;
+    private int rot = 0;
+    private int rotSpeed = 0;
+    
+    // core
+    private final PApplet app;
+    
+    /*
+    Constructor for circle collider.
+    @param app The parent applet.
+    @param x The initial x position.
+    @param y The initial y position.
+    @param radius The initial radius.
+    */
+    public MovingObject(PApplet app, int x, int y, int radius) {
+        this.app = app;
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+    
+    /*
+    Moves the moving object to a new position.
+    @param x The new x position.
+    @param y The new y position.
+    */
+    public void moveToInstant(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+    public void moveTo(int x, int y) {
+        this.targetX = x;
+        this.targetY = y;
+        moveFlag = true;
+    }
+    
+    /*
+    Updates the radius property of the moving object.
+    @param radius The new radius of the moving object.
+    */
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+    
+    /*
+    Updates the colour property of the moving object.
+    @param colourRGB The colour in an RGB format.
+    */
+    public void setColour(int[] colourRGB) {
+        this.colourRGB = colourRGB;
+    }
+    
+    /*
+    Updates the speed property of the moving object.
+    @param speed The new speed of the moving object.
+    */
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+    
+    /*
+    Updates the rotation property of the moving object.
+    @param rot The new rotation of the moving object.
+    */
+    public void setRotation(int rot) {
+        this.rot = rot;
+    }
+    
+    /*
+    Updates the rotation speed property of the moving object.
+    @param speed The new rotation speed of the moving object.
+    */
+    public void setRotationSpeed(int rotSpeed) {
+        this.rotSpeed = rotSpeed;
+    }
+    
+    /*
+    Gets the speed property
+    @return The speed of the moving object
+    */
+    public int getSpeed() {
+        return speed;
+    }
+    
+    /*
+    Gets the rotation property
+    @return The rotation of the moving object
+    */
+    public int getRotation() {
+        return rot;
+    }
+    
+    /*
+    Gets the rotation speed property
+    @return The rotation speed of the moving object
+    */
+    public int getRotationSpeed() {
+        return rotSpeed;
+    }
+    
+    /*
+    Returns the radius property of the moving object.
+    @return The radius of the moving object.
+    */
+    public int getRadius() {
+        return radius;
+    }
+    
+    /*
+    Returns the colour property of the moving object.
+    @return The clouur in RGB format.
+    */
+    public int[] getColour() {
+        return colourRGB;
+    }
+    
+    public void update() {
+        //if (moveFlag)
+        
+        rot += rotSpeed;
+    }
+    
+    /*
+    Draws the moving object.
+    */
+    public void draw() {
+        app.fill(colourRGB[0], colourRGB[1], colourRGB[2]);
+        app.circle(x, y, radius);
+    }
+    
+    /*
+    Checks if two moving objects are colliding.
+    @return If the other moving object is in contact with this moving object.
+    */
+    public boolean isColliding(MovingObject other) {
+        return Vector2.GetDistance(x, y, other.x, other.y) < radius + other.getRadius();
+    }
+    
+    /*
+    Checks if the moving object is in screen bounds.
+    @return If the moving object is within screen bounds.
+    */
+    public boolean inBounds() {
+        return x > 0 && x < app.width && y > 0 && y < app.height;
+    }
+}

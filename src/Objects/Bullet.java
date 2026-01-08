@@ -6,7 +6,7 @@ import processing.core.PApplet;
  *
  * @author Helpful273
  */
-public class Bullet extends CircleCollider {
+public class Bullet extends MovingObject {
     // CONSTANTS
     private final static int DEFAULT_POSITION = -100;
     private final static int DEFAULT_RADIUS = 3;
@@ -17,12 +17,6 @@ public class Bullet extends CircleCollider {
     */
     private final static int DEFAULT_MOVE_INCREMENT = 4;
     
-    // bullet trajectory
-    private int rot = 0;
-    
-    // bullet properties
-    private int speed = 0;
-    private int rotSpeed = 0;
     private int damage = 0;
     
     // core
@@ -36,31 +30,7 @@ public class Bullet extends CircleCollider {
     public Bullet(PApplet app, BulletPool pool) {
         super(app, DEFAULT_POSITION, DEFAULT_POSITION, DEFAULT_RADIUS);
         this.pool = pool;
-    }
-    
-    /*
-    Updates the speed property of the bullet.
-    @param speed The new speed of the bullet.
-    */
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-    
-    /*
-    Updates the rotation property of the bullet.
-    @param rot The new rotation of the bullet.
-    */
-    public void setRotation(int rot) {
-        this.rot = rot;
-    }
-    
-    /*
-    Updates the rotation speed property of the bullet.
-    @param speed The new rotation speed of the bullet.
-    */
-    public void setRotationSpeed(int rotSpeed) {
-        this.rotSpeed = rotSpeed;
-    }
+    }    
     
     /*
     Updates the set damage property of the bullet.
@@ -71,15 +41,24 @@ public class Bullet extends CircleCollider {
     }
     
     /*
+    Gets the damage property of the bullet.
+    @return The damage property.
+    */
+    public int getDamage() {
+        return damage;
+    }
+    
+    /*
     Updates the bullet.
     */
+    @Override
     public void update() {
-        int[] vector = Vector2.RotateVector(DEFAULT_MOVE_INCREMENT * speed, 0, rot);
+        int[] vector = Vector2.RotateVector(DEFAULT_MOVE_INCREMENT * super.getSpeed(), 0, super.getRotation());
         
         x += vector[0];
         y += vector[1];
         
-        rot += rotSpeed;
+        super.update();
     }
     
     /*

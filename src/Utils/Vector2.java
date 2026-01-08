@@ -27,11 +27,33 @@ public class Vector2 {
     /*
     Gets the distance between two vectors.
     @param x The x coordinate of the first vector.
-    @param y The y coordinate of the second vector.
-    @param x2 The x coordinate of the first vector.
+    @param y The y coordinate of the first vector.
+    @param x2 The x coordinate of the second vector.
     @param y2 The y coordinate of the second vector.
+    @return The distance between the two vectors.
     */
     public static int GetDistance(int x, int y, int x2, int y2) {
         return (int) Math.round(Math.sqrt((x2 - x)^2 + (y2- y)^2));
+    }
+    
+    /*
+    Gets the lerped position between two vectors.
+    @param xStart The x coordinate of the start vector.
+    @param yStart The y coordinate of the start vector.
+    @param xEnd The x coordinate of the end vector.
+    @param yEnd The y coordinate of the end vector.
+    @param time The value affecting the point between two vectors
+    @return The lerped position.
+    */
+    public static int[] Lerp(int xStart, int yStart, int xEnd, int yEnd, int time) {
+        int xDifference = xEnd - xStart;
+        int yDifference = yEnd - yStart;
+        
+        int[] endVector = new int[2];
+        
+        endVector[0] = xStart + xDifference * time;
+        endVector[1] = yStart + yDifference * time;
+        
+        return endVector;
     }
 }

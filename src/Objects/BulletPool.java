@@ -2,6 +2,7 @@ package Objects;
 import processing.core.PApplet;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.Iterator;
 
 /**
  *
@@ -44,10 +45,23 @@ public class BulletPool {
     Updates all bullets in the active bullet pool.
     */
     public void update() {
-        for (Bullet bullet: _activeBullets) {
-            bullet.update();
+        Iterator<Bullet> itr = _activeBullets.iterator();
+        int i = 0;
+        
+        while (itr.hasNext()) {
+            itr.next();
             
-            if (!bullet.inBounds()) {
+            Bullet bullet = _activeBullets.get(i);
+            
+            /*
+            Updates the bullet if it is in bounds. Otherwise skip and remove
+            bullet SAFELY and add to inactive pool.
+            */
+            if (bullet.inBounds()) {
+                i++;
+                bullet.update();
+            } else {
+                itr.remove();
                 bullet.kill();
             }
         }
@@ -76,16 +90,18 @@ public class BulletPool {
     @param bullet The bullet object to recall.
     */
     public void recall(Bullet bullet) {
-        bullet.moveTo(DEFAULT_INSTANCE_POSITION, DEFAULT_INSTANCE_POSITION);
+        bullet.moveToInstant(DEFAULT_INSTANCE_POSITION, DEFAULT_INSTANCE_POSITION);
         _inactiveBullets.add(bullet);
-        _inactiveBullets.remove(bullet);
+        _activeBullets.remove(bullet);
     }
     
     /*
     Fetches the first inactive Bullet. When trying to fetch a Bullet and none
     are available, a new Bullet instantiated instead.
+    @param x The initial bullet position x.
+    @param y The initial bullet position y.
     */
-    public Bullet getBullet() {
+    public Bullet getBullet(int x, int y) {
         Bullet fetchedBullet;
         
         try {
@@ -96,10 +112,9 @@ public class BulletPool {
         } catch(NoSuchElementException e) {
             // Create new Bullet
             fetchedBullet = new Bullet(app, this);
-            
-            System.out.println(_inactiveBullets.size() + _activeBullets.size() + " wa wa");
         } 
         
+        fetchedBullet.moveToInstant(x, y);
         // Add Bullet to active pool.
         _activeBullets.add(fetchedBullet);
         

@@ -5,12 +5,11 @@ import processing.core.*;
  *
  * @author Helpful273
  */
-public class Actor extends CircleCollider {
+public class Actor extends MovingObject {
     // CONSTANTS
     private final static int[] HITBOX_COLOUR = {255, 255, 255};
     
     // character properties
-    private int maxHealth;
     private int health;
     
     // core
@@ -24,11 +23,20 @@ public class Actor extends CircleCollider {
     @param y The initial y position.
     @param radius The initial radius.
     */
-    public Actor(PApplet app, String imagePath, int x, int y, int radius) {
+    public Actor(PApplet app, String imagePath, int health, int x, int y, int radius) {
         super(app, x, y, radius);
         super.setColour(HITBOX_COLOUR);
         this.app = app;
         this.image = app.loadImage(imagePath);
+        this.health = health;
+    }
+    
+    public void takeDamage(int damage) {
+        health -= damage;
+        
+        if (health <= 0) {
+            // TODO: death hook
+        } 
     }
     
     /*

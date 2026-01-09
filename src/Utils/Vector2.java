@@ -32,8 +32,18 @@ public class Vector2 {
     @param y2 The y coordinate of the second vector.
     @return The distance between the two vectors.
     */
-    public static int GetDistance(int x, int y, int x2, int y2) {
+    public static int Magnitude(int x, int y, int x2, int y2) {
         return (int) Math.round(Math.sqrt((x2 - x)^2 + (y2- y)^2));
+    }
+    
+    /*
+    Gets the magnitude of a vector.
+    @param x The x coordinate of the first vector.
+    @param y The y coordinate of the first vector.
+    @return The magnitude vectors.
+    */
+    public static int Magnitude(int x, int y) {
+        return (int) Math.round(Math.sqrt((0 - x)^2 + (0 - y)^2));
     }
     
     /*
@@ -45,14 +55,32 @@ public class Vector2 {
     @param time The value affecting the point between two vectors
     @return The lerped position.
     */
-    public static int[] Lerp(int xStart, int yStart, int xEnd, int yEnd, int time) {
+    public static int[] Lerp(int xStart, int yStart, int xEnd, int yEnd, double time) {
         int xDifference = xEnd - xStart;
         int yDifference = yEnd - yStart;
         
         int[] endVector = new int[2];
         
-        endVector[0] = xStart + xDifference * time;
-        endVector[1] = yStart + yDifference * time;
+        endVector[0] = xStart + (int) Math.round(xDifference * time);
+        endVector[1] = yStart + (int) Math.round(yDifference * time);
+        
+        System.out.println(endVector[0] + " " + endVector[1]);
+        
+        return endVector;
+    }
+    
+    /*
+    Gets the vector with a length of 1.
+    @param x The x coordinate of the vector.
+    @param y The y coordinate of the vector.
+    @return The vector with a length of 1.
+    */
+    public static int[] Unit(int x, int y) {
+        int distance = Magnitude(x, y);
+        int[] endVector = new int[2];
+        
+        endVector[0] = x / distance;
+        endVector[1] = y / distance;
         
         return endVector;
     }

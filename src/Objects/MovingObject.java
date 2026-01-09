@@ -9,12 +9,20 @@ import Utils.*;
 public class MovingObject {
     // CONSTANTS
     private final static int DEFAULT_COLOUR = 100;
+    /* 
+    This will always represent "x" in a (x, 0) vector. With this in conjunction
+    with 0 rotation the bullet will move toward the right of the screen at
+    "x" pixels per frame at 60 frames per second.
+    */
+    public final static int DEFAULT_MOVE_INCREMENT = 3;
     
     // position
     public int x, y;
+    private int startX, startY;
     private int targetX, targetY;
     private boolean moveFlag = false;
-    private boolean targetReached = false;
+    private double time = 0;
+    private double duration = 0;
     
     // collider properties
     private int radius;
@@ -50,9 +58,12 @@ public class MovingObject {
         this.y = y;
     }
     
-    public void moveTo(int x, int y) {
+    public void moveTo(int x, int y, double time) {
+        this.startX = this.x;
+        this.startY = this.y;
         this.targetX = x;
         this.targetY = y;
+        this.time = time * 60;
         moveFlag = true;
     }
     
@@ -137,7 +148,17 @@ public class MovingObject {
     }
     
     public void update() {
-        //if (moveFlag)
+        if (moveFlag) {
+            int[] lerpedPosition = Vector2.Lerp(startX, startY, targetX, targetY, duration/time);
+            this.x = lerpedPosition[0];
+            this.y = lerpedPosition[1];
+            
+            if (duration >= time) {
+                moveFlag = false;
+            }
+            
+            duration++;
+        }
         
         rot += rotSpeed;
     }
@@ -155,7 +176,7 @@ public class MovingObject {
     @return If the other moving object is in contact with this moving object.
     */
     public boolean isColliding(MovingObject other) {
-        return Vector2.GetDistance(x, y, other.x, other.y) < radius + other.getRadius();
+        return Vector2.Magnitude(x, y, other.x, other.y) < radius + other.getRadius();
     }
     
     /*

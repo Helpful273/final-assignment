@@ -1,5 +1,8 @@
 package Objects;
 import processing.core.*;
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 
 /**
  *
@@ -9,12 +12,16 @@ public class Actor extends MovingObject {
     // CONSTANTS
     private final static int[] HITBOX_COLOUR = {255, 255, 255};
     
+    // position
+    public int moveFactorX, moveFactorY;
+    
     // character properties
     private int health;
     
     // core
     private PApplet app;
     private PImage image;
+    private ArrayList<ArrayList<Bullet>> collisionChecks = new ArrayList<>();
     
     /*
     Constructor for circle collider.
@@ -30,6 +37,14 @@ public class Actor extends MovingObject {
         this.image = app.loadImage(imagePath);
         this.health = health;
     }
+    private final Consumer<Bullet> onCollision = bullet -> {
+        this.takeDamage(bullet.getDamage());
+        bullet.toKill = true;
+    };
+    
+    private final Consumer<ArrayList<Bullet>> checkPool = pool -> {
+        pool.forEach(onCollision);
+    };
     
     public void takeDamage(int damage) {
         health -= damage;
@@ -37,6 +52,22 @@ public class Actor extends MovingObject {
         if (health <= 0) {
             // TODO: death hook
         } 
+    }
+    
+    public void addCollisionListener(ArrayList<Bullet> pool) {
+        if (collisionChecks.contains(pool)) return;
+        collisionChecks.add(pool);
+    }
+    
+    /*
+    Updates the character
+    */
+    @Override
+    public void update() {
+        if (!collisionChecks.isEmpty())
+            collisionChecks.forEach(checkPool);
+        
+        super.update();
     }
     
     /*

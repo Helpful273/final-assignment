@@ -10,27 +10,20 @@ public class Bullet extends MovingObject {
     // CONSTANTS
     private final static int DEFAULT_POSITION = -100;
     private final static int DEFAULT_RADIUS = 3;
-    /* 
-    This will always represent "x" in a (x, 0) vector. With this in conjunction
-    with 0 rotation the bullet will move toward the right of the screen at
-    "x" pixels per frame at 60 frames per second.
-    */
-    private final static int DEFAULT_MOVE_INCREMENT = 4;
     
+    // bullet properties
     private int damage = 0;
     
     // core
-    private final BulletPool pool;
+    public boolean toKill;
     
     /*
     Bullet constructor.
     @param app The parent applet.
-    @param pool The BulletPool the bullet belongs to
     */
-    public Bullet(PApplet app, BulletPool pool) {
+    public Bullet(PApplet app) {
         super(app, DEFAULT_POSITION, DEFAULT_POSITION, DEFAULT_RADIUS);
-        this.pool = pool;
-    }    
+    }
     
     /*
     Updates the set damage property of the bullet.
@@ -59,12 +52,5 @@ public class Bullet extends MovingObject {
         y += vector[1];
         
         super.update();
-    }
-    
-    /*
-    Recalls this object to its inactive pool. See BulletPool.java
-    */
-    public void kill() {
-        pool.recall(this);
     }
 }

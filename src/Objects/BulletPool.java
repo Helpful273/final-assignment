@@ -28,7 +28,7 @@ public class BulletPool {
         this.app = app;
         
         for (int i = 0; i < initialAmount; i++) {
-            Bullet newBullet = new Bullet(app, this);
+            Bullet newBullet = new Bullet(app);
             _inactiveBullets.add(newBullet);
         }
     }
@@ -57,12 +57,12 @@ public class BulletPool {
             Updates the bullet if it is in bounds. Otherwise skip and remove
             bullet SAFELY and add to inactive pool.
             */
-            if (bullet.inBounds()) {
+            if (bullet.inBounds() && !bullet.toKill) {
                 i++;
                 bullet.update();
             } else {
                 itr.remove();
-                bullet.kill();
+                this.recall(bullet);
             }
         }
     }
@@ -101,7 +101,7 @@ public class BulletPool {
     @param x The initial bullet position x.
     @param y The initial bullet position y.
     */
-    public Bullet getBullet(int x, int y) {
+    public Bullet spawnBullet(int x, int y) {
         Bullet fetchedBullet;
         
         try {
@@ -111,13 +111,18 @@ public class BulletPool {
             _inactiveBullets.remove(0);
         } catch(NoSuchElementException e) {
             // Create new Bullet
-            fetchedBullet = new Bullet(app, this);
+            fetchedBullet = new Bullet(app);
         } 
         
         fetchedBullet.moveToInstant(x, y);
+        fetchedBullet.toKill = false;
         // Add Bullet to active pool.
         _activeBullets.add(fetchedBullet);
         
         return fetchedBullet;
+    }
+    
+    public ArrayList<Bullet> getActivePool() {
+        return _activeBullets;
     }
 }

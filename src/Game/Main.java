@@ -9,16 +9,26 @@ import Utils.*;
  * @author Helpful273
  */
 public class Main extends PApplet {
+    StageManager stageManager;
+    
     public void settings() {
         size(800, 800);
     }
     
     public void setup() {
-        StageManager.awake();
+        stageManager = new StageManager(this);
+        stageManager.awake();
     }
     
     public void draw() {
-        StageManager.update(keyCode);
-        
+        stageManager.update();
+    }
+    
+    public void keyPressed() {
+        stageManager.keyDown(keyCode);
+    }
+    
+    public void keyReleased() {
+        stageManager.keyUp();
     }
 }

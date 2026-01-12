@@ -14,7 +14,7 @@ public class MovingObject {
     with 0 rotation the bullet will move toward the right of the screen at
     "x" pixels per frame at 60 frames per second.
     */
-    public final static int DEFAULT_MOVE_INCREMENT = 3;
+    public final static int DEFAULT_MOVE_INCREMENT = 2;
     
     // position
     public int x, y;
@@ -176,7 +176,7 @@ public class MovingObject {
     @return If the other moving object is in contact with this moving object.
     */
     public boolean isColliding(MovingObject other) {
-        return Vector2.Magnitude(x, y, other.x, other.y) < radius + other.getRadius();
+        return PApplet.dist(x, y, other.x, other.y) < radius + other.getRadius();
     }
     
     /*

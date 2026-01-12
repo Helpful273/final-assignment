@@ -15,8 +15,8 @@ public class BulletPool {
     
     // core
     private final PApplet app;
-    private final ArrayList<Bullet> _activeBullets = new ArrayList();
-    private final ArrayList<Bullet> _inactiveBullets = new ArrayList();
+    private final ArrayList<Bullet> _activeBullets = new ArrayList<>();
+    private final ArrayList<Bullet> _inactiveBullets = new ArrayList<>();
     
     /*
     Creates a new pool of bullets.

@@ -19,20 +19,23 @@ public class Main extends PApplet {
         pool = new BulletPool(this, 1);
         dummy = new Actor(this, "Assets/Characters/Character.PNG", 1, 400, 600, 3);
         dummy.addCollisionListener(pool.getActivePool());
+        dummy.setRotationSpeed(1);
         
     }
     
     public void draw() {
-        
         Bullet test = pool.spawnBullet(400, 50);
-        test.setRotation(90);
+        test.setRotation(dummy.getRotation());
+        test.setRotationSpeed(1);
         test.setRadius(10);
-        test.setSpeed(3);
+        test.setSpeed(1);
+                
         
         background(200);
         pool.update();
         dummy.update();
-        pool.draw();
         dummy.draw();
+        dummy.drawHitbox();
+        pool.draw();
     }
 }

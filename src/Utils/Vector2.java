@@ -11,7 +11,7 @@ public class Vector2 {
     @param y The y coordinate in the vector.
     @param rot The amount to rotate the vector.
     */
-    public static int[] RotateVector(int x, int y, int rot) {
+    public static int[] RotateVector(double x, int y, int rot) {
         int[] rotatedVector = new int[2];
         
         // convert deg to rad
@@ -25,25 +25,13 @@ public class Vector2 {
     }
     
     /*
-    Gets the distance between two vectors.
-    @param x The x coordinate of the first vector.
-    @param y The y coordinate of the first vector.
-    @param x2 The x coordinate of the second vector.
-    @param y2 The y coordinate of the second vector.
-    @return The distance between the two vectors.
-    */
-    public static int Magnitude(int x, int y, int x2, int y2) {
-        return (int) Math.round(Math.sqrt((x2 - x)^2 + (y2- y)^2));
-    }
-    
-    /*
     Gets the magnitude of a vector.
     @param x The x coordinate of the first vector.
     @param y The y coordinate of the first vector.
     @return The magnitude vectors.
     */
     public static int Magnitude(int x, int y) {
-        return (int) Math.round(Math.sqrt((0 - x)^2 + (0 - y)^2));
+        return (int) Math.round(Math.sqrt(x^2 + y^2));
     }
     
     /*

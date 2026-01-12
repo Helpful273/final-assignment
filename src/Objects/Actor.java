@@ -37,13 +37,15 @@ public class Actor extends MovingObject {
         this.image = app.loadImage(imagePath);
         this.health = health;
     }
-    private final Consumer<Bullet> onCollision = bullet -> {
-        this.takeDamage(bullet.getDamage());
-        bullet.toKill = true;
+    private final Consumer<Bullet> checkCollision = bullet -> {
+        if (this.isColliding(bullet)) {
+            this.takeDamage(bullet.getDamage());
+            bullet.toKill = true;
+        }
     };
     
     private final Consumer<ArrayList<Bullet>> checkPool = pool -> {
-        pool.forEach(onCollision);
+        pool.forEach(checkCollision);
     };
     
     public void takeDamage(int damage) {

@@ -53,6 +53,7 @@ public class Actor extends MovingObject {
         
         if (health <= 0) {
             // TODO: death hook
+            System.out.println(1);
         } 
     }
     

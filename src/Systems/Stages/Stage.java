@@ -9,21 +9,8 @@ abstract class Stage {
     
     // creation
     public abstract void awakeFn();
-    public abstract void cleanFn();
     
     // frame
-    public void update() {
-        
-    }
-    
-    public void draw() {
-        
-    }
-    
-    // events
-    public abstract void keyDown(int keyCode);
-    
-    public void keyUp() {
-        keyAlreadyDown = false;
-    }
+    public abstract void update();
+    public abstract void draw();
 }

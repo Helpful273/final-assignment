@@ -25,16 +25,6 @@ public class Vector2 {
     }
     
     /*
-    Gets the magnitude of a vector.
-    @param x The x coordinate of the first vector.
-    @param y The y coordinate of the first vector.
-    @return The magnitude vectors.
-    */
-    public static int Magnitude(int x, int y) {
-        return (int) Math.round(Math.sqrt(x^2 + y^2));
-    }
-    
-    /*
     Gets the lerped position between two vectors.
     @param xStart The x coordinate of the start vector.
     @param yStart The y coordinate of the start vector.
@@ -53,22 +43,6 @@ public class Vector2 {
         endVector[1] = yStart + (int) Math.round(yDifference * time);
         
         System.out.println(endVector[0] + " " + endVector[1]);
-        
-        return endVector;
-    }
-    
-    /*
-    Gets the vector with a length of 1.
-    @param x The x coordinate of the vector.
-    @param y The y coordinate of the vector.
-    @return The vector with a length of 1.
-    */
-    public static int[] Unit(int x, int y) {
-        int distance = Magnitude(x, y);
-        int[] endVector = new int[2];
-        
-        endVector[0] = x / distance;
-        endVector[1] = y / distance;
         
         return endVector;
     }

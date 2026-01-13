@@ -21,14 +21,17 @@ public class Main extends PApplet {
     }
     
     public void draw() {
+        background(200);
         stageManager.update();
+        stageManager.draw();
     }
     
+    // events
     public void keyPressed() {
         stageManager.keyDown(keyCode);
     }
     
     public void keyReleased() {
-        stageManager.keyUp();
+        stageManager.keyUp(keyCode);
     }
 }

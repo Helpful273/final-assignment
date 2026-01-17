@@ -9,10 +9,10 @@ import processing.core.PApplet;
 public class Bullet extends MovingObject {
     // CONSTANTS
     private final static int DEFAULT_POSITION = -100;
-    private final static int DEFAULT_RADIUS = 3;
+    private final static int DEFAULT_RADIUS = 10;
     
     // bullet properties
-    private int damage = 0;
+    private int damage = 1;
     
     // core
     public boolean toKill;

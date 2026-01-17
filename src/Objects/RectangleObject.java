@@ -1,16 +1,18 @@
 package Objects;
-import processing.core.PApplet;
-import processing.core.PImage;
+import processing.core.*;
 
 /**
  *
  * @author Helpful273
  */
 public class RectangleObject {
+    // DEFAULTS
+    private final static int DEFAULT_COLOUR = 100;
+    
     // properties
     public int x, y;
     private int width, height;
-    private int[] colourRGB;
+    private int[] colourRGB = {DEFAULT_COLOUR, DEFAULT_COLOUR, DEFAULT_COLOUR};
     
     // core
     PApplet app;
@@ -21,8 +23,17 @@ public class RectangleObject {
         this.x = x;
         this.y = y;
     }
+    
     /*
-    Updates the colour property of the moving object.
+    Updates the image of the object.
+    @param imagePath The path to the image file.
+    */
+    public void setImage(String imagePath) {
+        image = app.loadImage(imagePath);
+    }
+    
+    /*
+    Updates the colour property of the  object.
     @param colourRGB The colour in an RGB format.
     */
     public void setColour(int[] colourRGB) {
@@ -43,11 +54,27 @@ public class RectangleObject {
     }
     
     public boolean withinInBounds(int x, int y) {
-        return (x > this.x - width/2 && x < this.x + width/2 && y > this.y - height/2 && y < this.y + height/2);
+        if (image != null) {
+            return (x > this.x - image.width/2 && 
+                    x < this.x + image.width/2 && 
+                    y > this.y - image.height/2 &&
+                    y < this.y + image.height/2);
+        }
+        
+        return (x > this.x - width/2 && 
+                x < this.x + width/2 && 
+                y > this.y - height/2 && 
+                y < this.y + height/2);
     }
     
     public void draw() {
+        if (image != null) {
+            app.image(image, x - image.width/2, y - image.height/2);
+            return;
+        }
+        
         app.fill(colourRGB[0], colourRGB[1], colourRGB[2]);
-        app.rect(x - width/2, y - height/2, width, height);
+        app.rectMode(PConstants.CENTER);
+        app.rect(x, y, width, height);
     }
 }

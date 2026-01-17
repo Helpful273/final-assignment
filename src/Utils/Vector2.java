@@ -1,4 +1,5 @@
 package Utils;
+import processing.core.*;
 
 /**
  *
@@ -11,7 +12,7 @@ public class Vector2 {
     @param y The y coordinate in the vector.
     @param rot The amount to rotate the vector.
     */
-    public static int[] RotateVector(double x, int y, int rot) {
+    public static int[] RotateVector(int x, int y, int rot) {
         int[] rotatedVector = new int[2];
         
         // convert deg to rad
@@ -41,8 +42,6 @@ public class Vector2 {
         
         endVector[0] = xStart + (int) Math.round(xDifference * time);
         endVector[1] = yStart + (int) Math.round(yDifference * time);
-        
-        System.out.println(endVector[0] + " " + endVector[1]);
         
         return endVector;
     }

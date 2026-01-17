@@ -1,14 +1,17 @@
-package Systems.Stages;
+package Systems;
 
 /**
  *
  * @author Helpful273
  */
 abstract class Stage {
-    public boolean keyAlreadyDown = false;
+    public boolean init = false;
     
     // creation
-    public abstract void awakeFn();
+    public void awakeFn() {
+        if (init) return;
+        init = true;
+    };
     
     // frame
     public abstract void update();

@@ -16,12 +16,13 @@ public class Actor extends MovingObject {
     public int moveFactorX, moveFactorY;
     
     // character properties
+    private int maxHealth;
     private int health;
     
     // core
     private PApplet app;
     private PImage image;
-    private ArrayList<ArrayList<Bullet>> collisionChecks = new ArrayList<>();
+    private final ArrayList<Double> thresholds = new ArrayList<>();
     
     /*
     Constructor for circle collider.
@@ -36,6 +37,7 @@ public class Actor extends MovingObject {
         this.app = app;
         this.image = app.loadImage(imagePath);
         this.health = health;
+        this.maxHealth = health;
     }
     private final Consumer<Bullet> checkCollision = bullet -> {
         if (this.isColliding(bullet)) {
@@ -48,29 +50,40 @@ public class Actor extends MovingObject {
         pool.forEach(checkCollision);
     };
     
+    public void addStage(double stageThreshold) {
+        thresholds.add(stageThreshold);
+    }
+    
+    public int getStage() {
+        double percentage = (double) health / (double) maxHealth;
+        int counter = thresholds.size() + 1;
+        for (double threshold: thresholds) {
+            if (percentage >= threshold) counter--;
+        }
+        
+        return counter;
+    }
+    
+    public int getHealth() {
+        return health;
+    }
+    
+    public void deathHook() {
+        // replace
+    }
+    
     public void takeDamage(int damage) {
         health -= damage;
         
+        System.out.println(health);
+        
         if (health <= 0) {
-            // TODO: death hook
-            System.out.println(1);
+            deathHook();
         } 
     }
     
-    public void addCollisionListener(ArrayList<Bullet> pool) {
-        if (collisionChecks.contains(pool)) return;
-        collisionChecks.add(pool);
-    }
-    
-    /*
-    Updates the character
-    */
-    @Override
-    public void update() {
-        if (!collisionChecks.isEmpty())
-            collisionChecks.forEach(checkPool);
-        
-        super.update();
+    public void checkCollision(BulletPool bulletPool) {
+        bulletPool.getActivePool().forEach(checkCollision);
     }
     
     /*
@@ -78,7 +91,8 @@ public class Actor extends MovingObject {
     */
     @Override
     public void draw() {
-        app.image(image, x - image.width/2, y - image.height/2);
+        app.imageMode(PConstants.CENTER);
+        app.image(image, x, y);
     }
     
     /*

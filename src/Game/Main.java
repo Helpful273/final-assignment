@@ -1,5 +1,5 @@
 package Game;
-import Systems.Stages.StageManager;
+import Systems.StageManager;
 import processing.core.PApplet;
 import Objects.*;
 import Utils.*;
@@ -33,5 +33,13 @@ public class Main extends PApplet {
     
     public void keyReleased() {
         stageManager.keyUp(keyCode);
+    }
+    
+    public void mousePressed() {
+        stageManager.mouseDown(mouseX, mouseY, mouseButton);
+    }
+    
+    public void mouseReleased() {
+        stageManager.mouseUp();
     }
 }

@@ -14,7 +14,7 @@ public class MovingObject {
     with 0 rotation the bullet will move toward the right of the screen at
     "x" pixels per frame at 60 frames per second.
     */
-    public final static int DEFAULT_MOVE_INCREMENT = 2;
+    public final static int DEFAULT_MOVE_INCREMENT = 5;
     
     // position
     public int x, y;
@@ -27,7 +27,7 @@ public class MovingObject {
     // collider properties
     private int radius;
     private int[] colourRGB = {DEFAULT_COLOUR, DEFAULT_COLOUR, DEFAULT_COLOUR};
-    private int speed = 0;
+    private int speed = 1;
     private int rot = 0;
     private int rotSpeed = 0;
     
@@ -154,6 +154,7 @@ public class MovingObject {
             this.y = lerpedPosition[1];
             
             if (duration >= time) {
+                duration = 0;
                 moveFlag = false;
             }
             
@@ -176,7 +177,7 @@ public class MovingObject {
     @return If the other moving object is in contact with this moving object.
     */
     public boolean isColliding(MovingObject other) {
-        return PApplet.dist(x, y, other.x, other.y) < radius + other.getRadius();
+        return PApplet.dist(x, y, other.x, other.y) < radius/2 + other.getRadius()/2;
     }
     
     /*

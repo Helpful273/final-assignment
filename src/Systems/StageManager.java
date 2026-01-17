@@ -119,51 +119,100 @@ public class StageManager {
         private int shootTick = 0;
         private int shootDelay = 2;
         
-        private int tick1 = 0;
-        private int tick2 = 520;
-        private int tickDelay1 = 5;
-        private int tickDelay2 = 520;
-        private int spawnAmount1 = 8;
-        private int rotationSpeed1 = 1;
-        private int rotation1 = 0;
+        // global pattern properties
+        private int bossShootTick = 0;
+        private int bossMoveTick = 520;
+        
+        // pattern 1 properties
+        private final int pattern1_shootDelay = 10;
+        private final int pattern1_moveDelay = 520;
+        private final int pattern1_spawnAmount = 3;
         private void pattern1() {
-            rotation1 += rotationSpeed1;
-            tick1++;
-            tick2++;
+            stageBoss.setRotation(stageBoss.getRotation() + 1);
             
-            if (tick2 >= tickDelay2) {
-                tick2 = 0;
+            // mover
+            if (bossMoveTick >= pattern1_moveDelay) {
+                bossMoveTick = 0;
                 
                 stageBoss.moveTo(Math.abs(stageBoss.x - app.width), stageBoss.y, 3);
             }
             
-            if (tick1 >= tickDelay1) {
-                tick1 = 0;
+            // bullet spiral pattern
+            if (bossShootTick >= pattern1_shootDelay) {
+                bossShootTick = 0;
                 
-                for (int i = 0; i < spawnAmount1; i++) {
+                for (int i = 0; i < pattern1_spawnAmount; i++) {
                     Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
-                    bullet.setRotation(rotation1 + i * 360/spawnAmount1);
+                    bullet.setRotation(stageBoss.getRotation() + i * 360/pattern1_spawnAmount);
+                    bullet.setRadius(30);
                 }
             }
         }
-        
+        // pattern 2 properties
+        private boolean pattern2_init = false;
+        private final int pattern2_shootDelay = 5;
+        private final int pattern2_moveDelay = 100;
         private void pattern2() {
+            // initer
+            if (!pattern2_init) {
+                pattern2_init = true;
+                stageBoss.moveTo(400, 200, 1);
+                stageBoss.setRotation(0);
+            }
             
+            // mover
+            if (bossMoveTick >= pattern2_moveDelay) {
+                bossMoveTick = 0;
+                
+                stageBoss.moveTo(random.nextInt(200, 600), random.nextInt(175, 225), 0.5);
+            }
+            
+            // stream pattern
+            if (bossShootTick >= pattern2_shootDelay) {
+                bossShootTick = 0;
+                
+                Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                bullet.setRotationFromTarget(player.x, player.y);
+                bullet.setRadius(random.nextInt(20, 30));
+            }
         }
         
+        // pattern 3 properties
+        private boolean pattern3_init = false;
+        private final int pattern3_shootDelay = 15;
+        private final int pattern3_spawnAmount = 6;
         private void pattern3() {
+            // initer
+            if (!pattern3_init) {
+                pattern3_init = true;
+                stageBoss.moveTo(400, 200, 1);
+            }
             
+            stageBoss.setRotation(stageBoss.getRotation() + 5);
+            
+            // bullet spiral pattern
+            if (bossShootTick >= pattern3_shootDelay) {
+                bossShootTick = 0;
+                
+                for (int i = 0; i < pattern3_spawnAmount; i++) {
+                    Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                    bullet.setRotation(stageBoss.getRotation() + i * 360/pattern3_spawnAmount);
+                    bullet.setRadius(30);
+                    bullet.setSpeed(2);
+                    bullet.setRotationSpeed(-1);
+                }
+            }
         }
         
         public void awakeFn() {
             super.awakeFn();
             
             stageBoss = new Actor(app, "Assets/Characters/Character.PNG", 10000, 200, 200, 100);
-            stageBoss.addStage(0.8);
+            stageBoss.addStage(0.7);
             stageBoss.addStage(0.3);
-            stageBoss.addStage(0.1);
+            stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/Character.PNG", 3, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/Character.PNG", 10, 400, 600, 10);
             player.setSpeed(5);
             
             bossBullets = new BulletPool(app);
@@ -172,9 +221,9 @@ public class StageManager {
         
         public void update() {
             switch(stageBoss.getStage()) {
-                case 1: pattern1();
-                case 2: pattern2();
-                case 3: pattern3();
+                case 1: pattern1(); break;
+                case 2: pattern2(); break;
+                case 3: pattern3(); break;
             }
             
             // inputs
@@ -201,7 +250,7 @@ public class StageManager {
                     bullet.setRotation(270);
                     bullet.setSpeed(5);
                     bullet.setColour(new int[] {255, 255, 0});
-                    bullet.setDamage(10);
+                    bullet.setDamage(20);
                 }
             }
             if (moveX != 0 && moveY != 0) diminFactor = Math.sqrt(2);
@@ -210,6 +259,9 @@ public class StageManager {
             player.y += moveY * player.getSpeed() / diminFactor;
             
             // updaters
+            bossShootTick++;
+            bossMoveTick++;
+            
             stageBoss.checkCollision(playerBullets);
             player.checkCollision(bossBullets);
             stageBoss.update();
@@ -251,20 +303,6 @@ public class StageManager {
         
         public void draw() {
             
-        }
-    };
-    
-    Stage combat4 = new Stage() {
-        public void awakeFn() {
-            
-        }
-        
-        public void update() {
-            
-        }
-    
-        public void draw() {
-                
         }
     };
 }

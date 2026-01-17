@@ -9,7 +9,7 @@ import processing.core.PApplet;
 public class Bullet extends MovingObject {
     // CONSTANTS
     private final static int DEFAULT_POSITION = -100;
-    private final static int DEFAULT_RADIUS = 10;
+    public final static int DEFAULT_RADIUS = 10;
     
     // bullet properties
     private int damage = 1;
@@ -46,7 +46,7 @@ public class Bullet extends MovingObject {
     */
     @Override
     public void update() {
-        int[] vector = Vector2.RotateVector(DEFAULT_MOVE_INCREMENT * super.getSpeed(), 0, super.getRotation());
+        int[] vector = Vector2.RotateVector(DEFAULT_VECTOR[0] * super.getSpeed(), DEFAULT_VECTOR[1], super.getRotation());
         
         x += vector[0];
         y += vector[1];

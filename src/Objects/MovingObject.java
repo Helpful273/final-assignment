@@ -8,13 +8,13 @@ import Utils.*;
  */
 public class MovingObject {
     // CONSTANTS
-    private final static int DEFAULT_COLOUR = 100;
     /* 
     This will always represent "x" in a (x, 0) vector. With this in conjunction
     with 0 rotation the bullet will move toward the right of the screen at
     "x" pixels per frame at 60 frames per second.
     */
-    public final static int DEFAULT_MOVE_INCREMENT = 5;
+    public final static int[] DEFAULT_VECTOR = {5, 0};
+    private final static int DEFAULT_COLOUR = 100;
     
     // position
     public int x, y;
@@ -59,6 +59,7 @@ public class MovingObject {
     }
     
     public void moveTo(int x, int y, double time) {
+        duration = 0;
         this.startX = this.x;
         this.startY = this.y;
         this.targetX = x;
@@ -105,6 +106,14 @@ public class MovingObject {
     */
     public void setRotationSpeed(int rotSpeed) {
         this.rotSpeed = rotSpeed;
+    }
+    
+    public void setRotationFromTarget(int x, int y) {
+        PVector v1 = new PVector(DEFAULT_VECTOR[0], DEFAULT_VECTOR[1]);
+        PVector v2 = new PVector(x - this.x, y - this.y);
+        float dotProduct = PVector.dot(v1, v2);
+        
+        this.setRotation((int) Math.toDegrees(Math.acos(dotProduct / (v1.mag() * v2.mag()))));
     }
     
     /*

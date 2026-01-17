@@ -58,13 +58,22 @@ public class MovingObject {
         this.y = y;
     }
     
+    /*
+    Moves the moving object over a specified amount of time.
+    @param x End x position.
+    @param y End y position.
+    @param time The amount of time it should take to finish the move.
+    */
     public void moveTo(int x, int y, double time) {
+        // set all the necessray fields
         duration = 0;
         this.startX = this.x;
         this.startY = this.y;
         this.targetX = x;
         this.targetY = y;
+        // make sure that the time is converted to ticks
         this.time = time * 60;
+        // enable move flag.
         moveFlag = true;
     }
     
@@ -108,11 +117,17 @@ public class MovingObject {
         this.rotSpeed = rotSpeed;
     }
     
+    /*
+    Updates the rotation property of the moving object based on a target position.
+    */
     public void setRotationFromTarget(int x, int y) {
+        // saves two positions as a vector
         PVector v1 = new PVector(DEFAULT_VECTOR[0], DEFAULT_VECTOR[1]);
         PVector v2 = new PVector(x - this.x, y - this.y);
+        // get dot product of two vectors
         float dotProduct = PVector.dot(v1, v2);
         
+        // use arccos get the theta between the two vectors and convert to degrees
         this.setRotation((int) Math.toDegrees(Math.acos(dotProduct / (v1.mag() * v2.mag()))));
     }
     
@@ -156,20 +171,28 @@ public class MovingObject {
         return colourRGB;
     }
     
+    /*
+    Updates the moving object
+    */
     public void update() {
+        // check if there is a lerp playing.
         if (moveFlag) {
+            // pivot the object with linear interpolation (lerp)
             int[] lerpedPosition = Vector2.Lerp(startX, startY, targetX, targetY, duration/time);
             this.x = lerpedPosition[0];
             this.y = lerpedPosition[1];
             
+            // check if the lerp is finished if it is disable moveflag
             if (duration >= time) {
                 duration = 0;
                 moveFlag = false;
             }
             
+            // increment lerp var
             duration++;
         }
         
+        // rotate
         rot += rotSpeed;
     }
     

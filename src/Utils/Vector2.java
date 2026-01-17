@@ -35,11 +35,14 @@ public class Vector2 {
     @return The lerped position.
     */
     public static int[] Lerp(int xStart, int yStart, int xEnd, int yEnd, double time) {
+        // get direction of the two vectors
         int xDifference = xEnd - xStart;
         int yDifference = yEnd - yStart;
         
+        // init new vector
         int[] endVector = new int[2];
         
+        // gives the vector at the specified "time" 
         endVector[0] = xStart + (int) Math.round(xDifference * time);
         endVector[1] = yStart + (int) Math.round(yDifference * time);
         

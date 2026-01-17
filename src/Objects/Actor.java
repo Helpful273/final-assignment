@@ -39,24 +39,39 @@ public class Actor extends MovingObject {
         this.health = health;
         this.maxHealth = health;
     }
+    
+    /*
+    Creates a function that is then passed in a loop to check for collision
+    */
     private final Consumer<Bullet> checkCollision = bullet -> {
+        // check if the Actor object (this) is colliding with a bullet
         if (this.isColliding(bullet)) {
+            // if it is take damage and kill the bullet
             this.takeDamage(bullet.getDamage());
             bullet.toKill = true;
         }
     };
     
-    private final Consumer<ArrayList<Bullet>> checkPool = pool -> {
-        pool.forEach(checkCollision);
-    };
-    
+    /*
+    Adds a stage at a health threshold.
+    @param The percentage in decimal format of the threshold (0)
+    */
     public void addStage(double stageThreshold) {
         thresholds.add(stageThreshold);
     }
     
+    /*
+    Mainly used for "enemy" actors.
+    @return The current "stage"
+    */
     public int getStage() {
+        // get current percentage of health
         double percentage = (double) health / (double) maxHealth;
+        // set default stage to the maximum
         int counter = thresholds.size() + 1;
+        
+        // for every threshold that can be passed we deduct from the counter
+        // this works because its in reverse.
         for (double threshold: thresholds) {
             if (percentage >= threshold) counter--;
         }
@@ -64,24 +79,37 @@ public class Actor extends MovingObject {
         return counter;
     }
     
+    /*
+    @return The health of the actor
+    */
     public int getHealth() {
         return health;
     }
     
+    /*
+    an event that activates on death.
+    */
     public void deathHook() {
-        // replace
+        //this function itself does nothing but should be overwritten.
     }
     
+    /*
+    makes the actor take an amount of damage. If the health points of the actor
+    falls below zero fire a deathHook event.
+    */
     public void takeDamage(int damage) {
+        // sub hp
         health -= damage;
         
-        System.out.println(health);
-        
+        // deathhook check
         if (health <= 0) {
             deathHook();
         } 
     }
     
+    /*
+    check if the actor is colliding with any bullets in a specified pool.
+    */
     public void checkCollision(BulletPool bulletPool) {
         bulletPool.getActivePool().forEach(checkCollision);
     }

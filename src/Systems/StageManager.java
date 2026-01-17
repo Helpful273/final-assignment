@@ -30,13 +30,22 @@ public class StageManager {
         this.app = app;
     }
     
+    // fired upon startup
     public void awake() {
         stages.put("Menu", menu);
         stages.put("highscore", highscore);
         stages.put("combat1", combat1);
+        stages.put("combat2", combat2);
+        stages.put("combat3", combat3);
+        
+        // automatically put users to the start screen.
         switchStage("Menu");
     }
     
+    /*
+    The functions below acts as a communication layer between the manager and
+    each individual stage.
+    */
     public void update() {
         stage.update();
     }
@@ -44,7 +53,12 @@ public class StageManager {
     public void draw() {
         stage.draw();
     }
+    // comm functions layer end.
     
+    /*
+    The functions below handle and manage the inputs from mouse and keyboard
+    and updates respective values that can be used in individual stages
+    */
     public void keyDown(int keyCode) {
         keysPressed.add(keyCode);
     }
@@ -63,11 +77,25 @@ public class StageManager {
     public void mouseUp() {
         mouseDown = false;
     }
+    // input handler end.
     
+    /*
+    Switches the current stage to another.
+    @param newStage The name of the stage.
+    */
     public void switchStage(String newStage) {
         stage = stages.get(newStage);
         stage.awakeFn();
     }
+    
+    /*
+    Below are where anonymous classes are created for each individual scene.
+    NOTE: majority of the code is creating objects and making bullet patterns.
+        I will NOT be explaining how bullet patterns are created because all of
+        them are editing and tweaking values until satisfactory. The only thing
+        that will be explained are the mechanisms involving GUI and data
+        handling.
+    */
     
     Stage menu = new Stage() {
         private RectangleObject startButton;
@@ -76,16 +104,20 @@ public class StageManager {
         public void awakeFn() {
             super.awakeFn();
             
+            // create objects
             startButton = new RectangleObject(app, 650, 50);
             highscoreButton = new RectangleObject(app, 650, 125);
             
+            // set properties
             startButton.setSize(250, 50);
             highscoreButton.setSize(250, 50);
         }
             
         public void update() {
+            // check for mouse click
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
             
+            // navigate to stage based on which button was pressed.
             if (startButton.withinInBounds(mouseX, mouseY)) switchStage("combat1");
             if (highscoreButton.withinInBounds(mouseX, mouseY)) switchStage("highscore");
         }
@@ -113,11 +145,10 @@ public class StageManager {
     Stage combat1 = new Stage() {
         private Actor stageBoss;
         private BulletPool bossBullets;
-        
         private Actor player;
         private BulletPool playerBullets;
         private int shootTick = 0;
-        private int shootDelay = 2;
+        private final int shootDelay = 2;
         
         // global pattern properties
         private int bossShootTick = 0;
@@ -224,22 +255,28 @@ public class StageManager {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
                 case 3: pattern3(); break;
+                case 4:
             }
             
             // inputs
             int moveX = 0;
             int moveY = 0;
             double diminFactor = 1;
-                
+            
+            // checks if the movement keys are pressed.
             if (keysPressed.contains(PConstants.LEFT)) moveX -= 1;
             if (keysPressed.contains(PConstants.RIGHT)) moveX += 1;
             if (keysPressed.contains(PConstants.UP)) moveY -= 1;
             if (keysPressed.contains(PConstants.DOWN)) moveY += 1;
+            
+            // slows player speed if shift is held
             if (keysPressed.contains(PConstants.SHIFT)) {
                 player.setSpeed(2);
             } else {
                 player.setSpeed(5);
             }
+            
+            // shoot bullet if z is held.
             if (keysPressed.contains(KEY_Z)) {
                 shootTick++;
                 
@@ -253,8 +290,12 @@ public class StageManager {
                     bullet.setDamage(20);
                 }
             }
+            
+            // diminish diagonal movement by the square root of 2 to prevent
+            // faster movement.
             if (moveX != 0 && moveY != 0) diminFactor = Math.sqrt(2);
-                
+            
+            // moves player based on input direction and speed.
             player.x += moveX * player.getSpeed() / diminFactor;
             player.y += moveY * player.getSpeed() / diminFactor;
             

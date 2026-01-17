@@ -1,8 +1,6 @@
 package Game;
 import Systems.StageManager;
 import processing.core.PApplet;
-import Objects.*;
-import Utils.*;
 
 /**
  *
@@ -16,6 +14,7 @@ public class Main extends PApplet {
     }
     
     public void setup() {
+        // setup game
         stageManager = new StageManager(this);
         stageManager.awake();
     }
@@ -26,19 +25,16 @@ public class Main extends PApplet {
         stageManager.draw();
     }
     
-    // events
+    // hook up input manager
     public void keyPressed() {
         stageManager.keyDown(keyCode);
     }
-    
     public void keyReleased() {
         stageManager.keyUp(keyCode);
     }
-    
     public void mousePressed() {
         stageManager.mouseDown(mouseX, mouseY, mouseButton);
     }
-    
     public void mouseReleased() {
         stageManager.mouseUp();
     }

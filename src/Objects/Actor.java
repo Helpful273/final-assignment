@@ -136,5 +136,8 @@ public class Actor extends MovingObject {
     */
     public void drawHitbox() {
         super.draw();
+        app.fill(255);
+        app.textSize(15);
+        app.text("Current HP: " + health, x, y - 30);
     }
 }

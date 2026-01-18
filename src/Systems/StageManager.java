@@ -1,11 +1,16 @@
 package Systems;
 import Objects.*;
 import java.util.Random;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.io.IOException;
 import processing.core.PApplet;
 import processing.core.PConstants;
-
 
 /**
  *
@@ -26,6 +31,7 @@ public class StageManager {
     
     private int mouseX, mouseY = 0;
     private int mouseButton = 0;
+    private int score = 0;
     
     public StageManager(PApplet app) {
         this.app = app;
@@ -99,6 +105,19 @@ public class StageManager {
     }
     
     /*
+    Write current score to a file
+    */
+    public void writeScore() {
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter("Data/score.txt", true));
+            writer.printf("%d\n", score); // write score
+            writer.close();
+        } catch (IOException e) {} // catch error
+        
+        score = 0;
+    }
+    
+    /*
     Below are where anonymous classes are created for each individual scene.
     NOTE: majority of the code is creating objects and making bullet patterns.
         I will NOT be explaining how bullet patterns are created because all of
@@ -108,6 +127,7 @@ public class StageManager {
     */
     
     Stage menu = new Stage() {
+        private RectangleObject background;
         private RectangleObject startButton;
         private RectangleObject highscoreButton;
         
@@ -115,6 +135,8 @@ public class StageManager {
             super.awakeFn();
             
             // create objects
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/menu.png");
             startButton = new RectangleObject(app, 650, 50);
             highscoreButton = new RectangleObject(app, 650, 125);
             
@@ -133,22 +155,64 @@ public class StageManager {
         }
             
         public void draw() {
+            background.draw();
             startButton.draw();
             highscoreButton.draw();
+            app.textAlign(PConstants.CENTER);
+            app.fill(255);
+            app.textSize(50);
+            app.text("Start", startButton.x, startButton.y + 25);
+            app.text("Highscores", highscoreButton.x, highscoreButton.y + 25);
         }
     };
     
     Stage highscore = new Stage() {
-        public void awakeFn() {
+        private RectangleObject back;
+        private ArrayList<Integer> scores;
+        
+        private void input() {
+            try {
+                Scanner fileReader = new Scanner(new File("Data/score.txt"));
+                while (fileReader.hasNext()) {
+                    System.out.println(1);
+                    scores.add(Integer.parseInt(fileReader.nextLine()));
+                }
+            } catch (IOException e) {}
             
+            scores.sort( (num1, num2) -> { 
+                return num1.compareTo(num2);
+            });
+            
+        }
+        
+        public void awakeFn() {
+            // flush all previous scores stored
+            if (scores != null) {
+                scores.clear();
+                input();
+            }
+            
+            super.awakeFn();
+            
+            scores = new ArrayList<>();
+            back = new RectangleObject(app, 400, 400);
+            back.setSize(800, 800);
+            input();
         }
         
         public void update() {
-            
+            if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
+            if (back.withinInBounds(mouseX, mouseY)) switchStage("menu");
         }
         
         public void draw() {
+            app.textAlign(PConstants.CENTER);
+            app.fill(0);
+            app.textSize(50);
             
+            app.text("Score 1: " + scores.get(0), 400, 200);
+            app.text("Score 2: " + scores.get(1), 400, 400);
+            app.text("Score 3: " + scores.get(2), 400, 600);
         }
     };
     
@@ -165,7 +229,10 @@ public class StageManager {
         public void update() {
             // navigate back to menu when clicked
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
-            if (background.withinInBounds(mouseX, mouseY)) switchStage("menu");
+            if (background.withinInBounds(mouseX, mouseY)) {
+                writeScore();
+                switchStage("menu");
+            }
         }
         
         public void draw() {
@@ -275,15 +342,15 @@ public class StageManager {
         public void update() {
             switch(state) {
                 case 0:
-                    ox.moveToInstant(400, 600);
-                    rat.moveToInstant(400, 300);
+                    ox.moveToInstant(400, 700);
+                    rat.moveToInstant(400, 400);
                     cat.moveToInstant(400, 500);
                     break;
                 case 4:
                     rabbit.moveToInstant(400, 200);
                     break;
-                case 11:
-                    switchStage("combat1");
+                case 10:
+                    switchStage("combat2");
             }
             
             // increment state
@@ -296,37 +363,194 @@ public class StageManager {
         }
         
         public void draw() {
+            background.draw();
             ox.draw();
             cat.draw();
             rat.draw();
+            rabbit.draw();
+            
+            switch(state) {
+                case 1:
+                    app.textAlign(PConstants.CENTER);
+                    app.fill(255);
+                    app.textSize(20);
+                    app.text("Ox: Why are you guys so heavy...", 400, 750);
+                    break;
+                case 2:
+                    app.text("Cat: Zip it and chop chop get to it.", 400, 750);
+                    break;
+                case 3:
+                    app.text("Rat: Who's that up ahead?", 400, 750);
+                    break;
+                case 4:
+                    app.text("Ox: Just ignore them I can't handle anymore weight or I'll sink...", 400, 750);
+                    break;
+                case 6:
+                    app.text("Rabbit: ...", 400, 750);
+                    break;
+                case 7:
+                    app.text("Rabbit: You aren't just gonna leave me here right?", 400, 750);
+                    break;
+                case 9:
+                    app.text("Rabbit: COME BACK!11!", 400, 750);
+                    break;
+            }
         }
     };
     
     Stage intermission2 = new Stage() {
+        private RectangleObject background;
+        private Actor ox, rat, cat;
+        private int state = 0;
+        
         public void awakeFn() {
+            state = 0;
+            super.awakeFn();
             
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/water.png");
+            
+            ox = new Actor(app, "Assets/Characters/ox.png", 0, -1000, -1000, 0);
+            rat = new Actor(app, "Assets/Characters/rat.png", 0, -1000, -1000, 0);
+            cat = new Actor(app, "Assets/Characters/cat.png", 0, -1000, -1000, 0);
         }
         
         public void update() {
+            switch(state) {
+                case 0:
+                    ox.moveToInstant(400, 700);
+                    rat.moveToInstant(400, 400);
+                    cat.moveToInstant(400, 500);
+                    break;
+                case 6:
+                    cat.moveTo(400, 200, 1);
+                    rat.moveTo(400, 650, 1);
+                    break;
+                case 7:
+                    cat.moveToInstant(400, 200);
+                    rat.moveToInstant(400, 650);
+                    break;
+                case 8:
+                    switchStage("combat3");
+            }
             
+            // increment state
+            if (!(mouseDown && mouseButton == PConstants.LEFT) && background.withinInBounds(mouseX, mouseY)) {
+                if (!clickSwitch) {
+                    clickSwitch = true;
+                    state++;
+                }
+            }
         }
         
         public void draw() {
+            background.draw();
+            ox.draw();
+            cat.draw();
+            rat.draw();
             
+            switch(state) {
+                case 1:
+                    app.textAlign(PConstants.CENTER);
+                    app.fill(255);
+                    app.textSize(20);
+                    app.text("Ox & Cat & Rat: Waw! I can see the end!", 400, 750);
+                    break;
+                case 3:
+                    app.text("Rat: Well...", 400, 750);
+                    break;
+                case 5:
+                    app.text("Rat: ...", 400, 750);
+                    break;
+                case 6:
+                    app.text("Rat: Heh... Cya... *pushes cat off*", 400, 750);
+                    break;
+                case 7:
+                    app.text("Cat: Bro what did I do.", 400, 750);
+                    break;
+            }
         }
     };
     
     Stage ending = new Stage() {
+        private RectangleObject background;
+        private Actor emperor, ox, rat;
+        private int state = 0;
+        
         public void awakeFn() {
+            state = 0;
+            super.awakeFn();
             
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/nakayamaTrackWithWater.png");
+            
+            emperor = new Actor(app, "Assets/Characters/Character.PNG", 0, -1000, -1000, 0);
+            ox = new Actor(app, "Assets/Characters/ox.png", 0, -1000, -1000, 0);
+            rat = new Actor(app, "Assets/Characters/rat.png", 0, -1000, -1000, 0);
         }
         
         public void update() {
+            switch(state) {
+                case 0:
+                    emperor.moveToInstant(200, 400);
+                    break;
+                case 6:
+                    rat.moveToInstant(600, 350);
+                    break;
+                case 7:
+                    ox.moveToInstant(600, 450);
+                    break;
+                case 10:
+                    switchStage("menu");
+            }
             
+            // increment state
+            if (!(mouseDown && mouseButton == PConstants.LEFT) && background.withinInBounds(mouseX, mouseY)) {
+                if (!clickSwitch) {
+                    clickSwitch = true;
+                    state++;
+                }
+            }
         }
         
         public void draw() {
+            background.draw();
+            emperor.draw();
+            ox.draw();
+            rat.draw();
             
+            switch(state) {
+                case 1:
+                    app.textAlign(PConstants.CENTER);
+                    app.fill(0);
+                    app.textSize(20);
+                    app.text("Jade Emperor: Its the final straight!", 400, 750);
+                    break;
+                case 2:
+                    app.text("Jade Emperor: The Rat and Ox are head to head!", 400, 750);
+                    break;
+                case 3:
+                    app.text("Jade Emperor: The Rat pulls through!", 400, 750);
+                    break;
+                case 4:
+                    app.text("Jade Emperor: The Rat is still going strong!", 400, 750);
+                    break;
+                case 5:
+                    app.text("Jade Emperor: They're leading by 1 length!", 400, 750);
+                    break;
+                case 6:
+                    app.text("Jade Emperor: AND THE RAT PULLS THROUGH!", 400, 750);
+                    break;
+                case 8:
+                    app.text("Rat: Heh its just too easy.", 400, 750);
+                    break;
+                case 9:
+                    app.textSize(50);
+                    app.text("the end.", 400, 400);
+                    app.textSize(20);
+                    app.text("100000 pts", 400, 500);
+                    break;
+            }
         }
     };
     
@@ -438,7 +662,7 @@ public class StageManager {
             stageBoss.addStage(0.3);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+            player = new Actor(app, "Assets/Characters/rat.png", 5, 400, 600, 10) {
                 public void deathHook() {
                     switchStage("death");
                 }
@@ -516,6 +740,11 @@ public class StageManager {
             player.drawHitbox();
             bossBullets.draw();
             playerBullets.draw();
+            
+            app.fill(255);
+            app.textSize(15);
+            app.text("Boss HP: " + stageBoss.getHealth(), player.x, player.y + 15);
+            app.text("Boss phase: " + stageBoss.getStage(), player.x, player.y + 30);
         }
     };
     
@@ -635,12 +864,12 @@ public class StageManager {
             background = new RectangleObject(app, 400, 400);
             background.setImage("Assets/Backgrounds/water.png");
             
-            stageBoss = new Actor(app, "Assets/Characters/rabbit.png", 25000, 400, 200, 100);
+            stageBoss = new Actor(app, "Assets/Characters/rabbit.png", 25000, 400, 200, 170);
             stageBoss.addStage(0.8);
             stageBoss.addStage(0.4);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+            player = new Actor(app, "Assets/Characters/rat.png", 5, 400, 600, 10) {
                 public void deathHook() {
                     switchStage("death");
                 }
@@ -656,7 +885,7 @@ public class StageManager {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
                 case 3: pattern3(); break;
-                case 4: switchStage("combat3");
+                case 4: switchStage("intermission2");
             }
             
             // inputs
@@ -719,6 +948,11 @@ public class StageManager {
             player.drawHitbox();
             bossBullets.draw();
             playerBullets.draw();
+            
+            app.fill(255);
+            app.textSize(15);
+            app.text("Boss HP: " + stageBoss.getHealth(), player.x, player.y + 5);
+            app.text("Boss phase: " + stageBoss.getStage(), player.x, player.y + 20);
         }
     };
     
@@ -938,16 +1172,16 @@ public class StageManager {
             background = new RectangleObject(app, 400, 400);
             background.setImage("Assets/Backgrounds/water.png");
             
-            stageBoss = new Actor(app, "Assets/Characters/cat.png", 50000, 400, 200, 100);
+            stageBoss = new Actor(app, "Assets/Characters/cat.png", 50000, 400, 200, 200);
             stageBoss.addStage(0.95);
             stageBoss.addStage(0.8);
             stageBoss.addStage(0.65);
-            stageBoss.addStage(0.4);
-            stageBoss.addStage(0.25);
-            stageBoss.addStage(0.1);
+            stageBoss.addStage(0.6);
+            stageBoss.addStage(0.45);
+            stageBoss.addStage(0.2);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+            player = new Actor(app, "Assets/Characters/rat.png", 5, 400, 600, 10) {
                 public void deathHook() {
                     switchStage("death");
                 }
@@ -967,7 +1201,7 @@ public class StageManager {
                 case 5: pattern5(); break;
                 case 6: pattern6(); break;
                 case 7: pattern7(); break;
-                case 8:
+                case 8: switchStage("ending");
             }
             
             // inputs
@@ -1031,6 +1265,11 @@ public class StageManager {
             player.drawHitbox();
             bossBullets.draw();
             playerBullets.draw();
+            
+            app.fill(255);
+            app.textSize(15);
+            app.text("Boss HP: " + stageBoss.getHealth(), player.x, player.y + 5);
+            app.text("Boss phase: " + stageBoss.getStage(), player.x, player.y + 20);
         }
     };
 }

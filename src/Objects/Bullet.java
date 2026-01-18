@@ -47,7 +47,7 @@ public class Bullet extends MovingObject {
     @Override
     public void update() {
         // rotates the directional based on  rotation
-        int[] vector = Vector2.RotateVector(DEFAULT_VECTOR[0] * super.getSpeed(), DEFAULT_VECTOR[1], super.getRotation());
+        int[] vector = Vector2.RotateVector((int) (DEFAULT_VECTOR[0] * super.getSpeed()), DEFAULT_VECTOR[1], super.getRotation());
         
         // updates pos
         x += vector[0];

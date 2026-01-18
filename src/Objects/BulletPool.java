@@ -119,7 +119,7 @@ public class BulletPool {
         // reset all fields
         fetchedBullet.setRotation(0);
         fetchedBullet.setRotationSpeed(0);
-        fetchedBullet.setSpeed(1);
+        fetchedBullet.setSpeed(1f);
         fetchedBullet.setRadius(Bullet.DEFAULT_RADIUS);
         
         // Add Bullet to active pool.

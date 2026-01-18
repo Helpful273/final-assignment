@@ -27,7 +27,7 @@ public class MovingObject {
     // collider properties
     private int radius;
     private int[] colourRGB = {DEFAULT_COLOUR, DEFAULT_COLOUR, DEFAULT_COLOUR};
-    private int speed = 1;
+    private double speed = 1;
     private int rot = 0;
     private int rotSpeed = 0;
     
@@ -97,7 +97,7 @@ public class MovingObject {
     Updates the speed property of the moving object.
     @param speed The new speed of the moving object.
     */
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
     
@@ -124,18 +124,19 @@ public class MovingObject {
         // saves two positions as a vector
         PVector v1 = new PVector(DEFAULT_VECTOR[0], DEFAULT_VECTOR[1]);
         PVector v2 = new PVector(x - this.x, y - this.y);
-        // get dot product of two vectors
+        // get dot and cross product of two vectors 
         float dotProduct = PVector.dot(v1, v2);
+        float crossProduct = v1.x * v2.y - v1.y * v2.x;
         
-        // use arccos get the theta between the two vectors and convert to degrees
-        this.setRotation((int) Math.toDegrees(Math.acos(dotProduct / (v1.mag() * v2.mag()))));
+        // use atan2 to get full 360
+        this.setRotation((int) Math.toDegrees(Math.atan2(crossProduct, dotProduct)));
     }
     
     /*
     Gets the speed property
     @return The speed of the moving object
     */
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
     

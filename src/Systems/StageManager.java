@@ -109,7 +109,7 @@ public class StageManager {
     */
     public void writeScore() {
         try {
-            PrintWriter writer = new PrintWriter(new FileWriter("Data/score.txt", true));
+            PrintWriter writer = new PrintWriter(new FileWriter("score.txt", true));
             writer.printf("%d\n", score); // write score
             writer.close();
         } catch (IOException e) {} // catch error
@@ -148,10 +148,12 @@ public class StageManager {
         public void update() {
             // check for mouse click
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
-            
-            // navigate to stage based on which button was pressed.
-            if (startButton.withinInBounds(mouseX, mouseY)) switchStage("intro");
-            if (highscoreButton.withinInBounds(mouseX, mouseY)) switchStage("highscore");
+            if (!clickSwitch) {
+                clickSwitch = true;
+                // navigate to stage based on which button was pressed.
+                if (startButton.withinInBounds(mouseX, mouseY)) switchStage("intro");
+                if (highscoreButton.withinInBounds(mouseX, mouseY)) switchStage("highscore");
+            }   
         }
             
         public void draw() {
@@ -172,7 +174,7 @@ public class StageManager {
         
         private void input() {
             try {
-                Scanner fileReader = new Scanner(new File("Data/score.txt"));
+                Scanner fileReader = new Scanner(new File("score.txt"));
                 while (fileReader.hasNext()) {
                     Integer item = Integer.parseInt(fileReader.nextLine());
                     scores.add(item);
@@ -181,7 +183,7 @@ public class StageManager {
             } catch (IOException e) {}
             
             scores.sort( (num1, num2) -> { 
-                return num1.compareTo(num2);
+                return num2.compareTo(num1);
             });
             
         }
@@ -203,7 +205,10 @@ public class StageManager {
         
         public void update() {
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
-            if (back.withinInBounds(mouseX, mouseY)) switchStage("menu");
+            if (!clickSwitch) {
+                clickSwitch = true;
+                if (back.withinInBounds(mouseX, mouseY)) switchStage("menu");
+            }
         }
         
         public void draw() {
@@ -230,9 +235,13 @@ public class StageManager {
         public void update() {
             // navigate back to menu when clicked
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
-            if (background.withinInBounds(mouseX, mouseY)) {
-                writeScore();
-                switchStage("menu");
+            if (!clickSwitch) {
+                clickSwitch = true;
+            
+                if (background.withinInBounds(mouseX, mouseY)) {
+                    writeScore();
+                    switchStage("menu");
+                }
             }
         }
         
@@ -675,6 +684,8 @@ public class StageManager {
         }
         
         public void update() {
+            score += 10;
+            
             switch(stageBoss.getStage()) {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
@@ -882,6 +893,8 @@ public class StageManager {
         }
         
         public void update() {
+            score += 10;
+            
             switch(stageBoss.getStage()) {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
@@ -1194,6 +1207,8 @@ public class StageManager {
         }
         
         public void update() {
+            score += 10;
+            
             switch(stageBoss.getStage()) {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;

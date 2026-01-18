@@ -174,9 +174,10 @@ public class StageManager {
             try {
                 Scanner fileReader = new Scanner(new File("Data/score.txt"));
                 while (fileReader.hasNext()) {
-                    System.out.println(1);
-                    scores.add(Integer.parseInt(fileReader.nextLine()));
+                    Integer item = Integer.parseInt(fileReader.nextLine());
+                    scores.add(item);
                 }
+                fileReader.close();
             } catch (IOException e) {}
             
             scores.sort( (num1, num2) -> { 

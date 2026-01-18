@@ -118,7 +118,7 @@ public class StageManager {
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
             
             // navigate to stage based on which button was pressed.
-            if (startButton.withinInBounds(mouseX, mouseY)) switchStage("combat3");
+            if (startButton.withinInBounds(mouseX, mouseY)) switchStage("combat1");
             if (highscoreButton.withinInBounds(mouseX, mouseY)) switchStage("highscore");
         }
             
@@ -238,12 +238,12 @@ public class StageManager {
         public void awakeFn() {
             super.awakeFn();
             
-            stageBoss = new Actor(app, "Assets/Characters/Character.PNG", 10000, 200, 200, 100);
+            stageBoss = new Actor(app, "Assets/Characters/ox.png", 10000, 200, 200, 300);
             stageBoss.addStage(0.7);
             stageBoss.addStage(0.3);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/Character.PNG", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -428,12 +428,12 @@ public class StageManager {
         public void awakeFn() {
             super.awakeFn();
             
-            stageBoss = new Actor(app, "Assets/Characters/Character.PNG", 25000, 400, 200, 100);
+            stageBoss = new Actor(app, "Assets/Characters/rabbit.png", 25000, 400, 200, 100);
             stageBoss.addStage(0.8);
             stageBoss.addStage(0.4);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/Character.PNG", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -445,7 +445,7 @@ public class StageManager {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
                 case 3: pattern3(); break;
-                case 4:
+                case 4: switchStage("combat3");
             }
             
             // inputs
@@ -521,6 +521,7 @@ public class StageManager {
         // global pattern properties
         private int bossShootTick = 0;
         private int bossShootTick2 = 0;
+        private int bossShootTick3 = 0;
         private int bossMoveTick = 0;
         
         private final int pattern1_shootDelay = 10;
@@ -614,30 +615,111 @@ public class StageManager {
             }
         }
         
+        private final int pattern3_shootDelay = 30;
+        private final int pattern3_moveDelay = 60;
         private void pattern3() {
+            if (bossMoveTick >= pattern3_moveDelay) {
+                bossMoveTick = 0;
+                stageBoss.moveTo(random.nextInt(325, 475), random.nextInt(100, 250), 1);
+            }
             
+            if (bossShootTick >= pattern3_shootDelay) {
+                bossShootTick = 0;
+                
+                for (int i = 0; i < 5; i++) {
+                    Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                    bullet.setRotationFromTarget(player.x, player.y);
+                    bullet.setSpeed(1+i*0.2);
+                }
+            }
         }
         
+        // charge...
+        private boolean pattern4_init = false;
+        private final int pattern4_shootDelay = 50;
         private void pattern4() {
+            if (!pattern4_init) {
+                pattern4_init = true;
+                stageBoss.moveTo(400, 100, 1);
+            }
             
+            if (bossShootTick >= pattern4_shootDelay) {
+                bossShootTick = 0;
+                
+                Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                bullet.setRotationFromTarget(player.x, player.y);
+            }
         }
         
+        // chargeeeeee...
+        private final int pattern5_shootDelay = 100;
         private void pattern5() {
-            
+            if (bossShootTick >= pattern5_shootDelay) {
+                bossShootTick = 0;
+                
+                Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                bullet.setRotationFromTarget(player.x, player.y);
+            }
         }
         
-        private void pattern6() {
-            
-        }
+        // ...
+        private void pattern6() {}
         
+        private final int pattern7_shootDelay = 150;
+        private final int pattern7_shootDelay2 = 20;
+        private final int pattern7_shootDelay3 = 400;
+        
+        // final attack
         private void pattern7() {
+            stageBoss.setRotation(stageBoss.getRotation() + 1);
             
+            if (bossShootTick >= pattern7_shootDelay) {
+                bossShootTick = 0;
+                
+                for (int i = 0; i < 5; i++) {
+                    Bullet bullet = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                    bullet.setRotationFromTarget(player.x, player.y);
+                    bullet.setRadius(50);
+                    bullet.setSpeed(1+i*0.2);
+                }
+            }
+            
+            if (bossShootTick2 >= pattern7_shootDelay2) {
+                bossShootTick2 = 0;
+                
+                for (int i = 0; i < 6; i++) {
+                    Bullet bullet3 = bossBullets.spawnBullet(stageBoss.x, stageBoss.y);
+                    bullet3.setRotation(stageBoss.getRotation() + i*90);
+                    bullet3.setRadius(30);
+                }
+                
+                for (int i = 0; i < 5; i++) {
+                    Bullet bullet = bossBullets.spawnBullet(random.nextInt(1, 799), 799);
+                    bullet.setRotation(random.nextInt(250, 290));
+                    bullet.setRadius(random.nextInt(5, 10));
+                    bullet.setSpeed(random.nextDouble(0.5, 1));
+                }
+            }
+            
+            if (bossShootTick3 >= pattern7_shootDelay3) {
+                bossShootTick3 = 0;
+                
+                int randomX = random.nextInt(1, 799);
+                int randomRot = random.nextInt(80, 100);
+                
+                for (int i = 0; i < 10; i++) {
+                    Bullet bullet = bossBullets.spawnBullet(randomX, 1);
+                    bullet.setRotation(randomRot);
+                    bullet.setRadius(300);
+                    bullet.setSpeed(0.5 + i*0.2);
+                }
+            }
         }
         
         public void awakeFn() {
             super.awakeFn();
             
-            stageBoss = new Actor(app, "Assets/Characters/Character.PNG", 50000, 400, 200, 100);
+            stageBoss = new Actor(app, "Assets/Characters/cat.png", 50000, 400, 200, 100);
             stageBoss.addStage(0.95);
             stageBoss.addStage(0.8);
             stageBoss.addStage(0.65);
@@ -646,7 +728,7 @@ public class StageManager {
             stageBoss.addStage(0.1);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/Character.PNG", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -709,6 +791,7 @@ public class StageManager {
             // updaters
             bossShootTick++;
             bossShootTick2++;
+            bossShootTick3++;
             bossMoveTick++;
             
             stageBoss.checkCollision(playerBullets);

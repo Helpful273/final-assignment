@@ -22,7 +22,8 @@ public class StageManager {
     private Random random = new Random();
     private PApplet app;
     private HashSet<Integer> keysPressed = new HashSet<>();
-    private boolean mouseDown = false;
+    private boolean mouseDown, clickSwitch = false;
+    
     private int mouseX, mouseY = 0;
     private int mouseButton = 0;
     
@@ -32,14 +33,22 @@ public class StageManager {
     
     // fired upon startup
     public void awake() {
-        stages.put("Menu", menu);
+        stages.put("menu", menu);
         stages.put("highscore", highscore);
+        
+        stages.put("intro", intro);
+        stages.put("intermission1", intermission1);
+        stages.put("intermission2", intermission2);
+        stages.put("ending", ending);
+        
         stages.put("combat1", combat1);
         stages.put("combat2", combat2);
         stages.put("combat3", combat3);
         
+        stages.put("death", death);
+        
         // automatically put users to the start screen.
-        switchStage("Menu");
+        switchStage("menu");
     }
     
     /*
@@ -76,6 +85,7 @@ public class StageManager {
     
     public void mouseUp() {
         mouseDown = false;
+        clickSwitch = false;
     }
     // input handler end.
     
@@ -118,7 +128,7 @@ public class StageManager {
             if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
             
             // navigate to stage based on which button was pressed.
-            if (startButton.withinInBounds(mouseX, mouseY)) switchStage("combat1");
+            if (startButton.withinInBounds(mouseX, mouseY)) switchStage("intro");
             if (highscoreButton.withinInBounds(mouseX, mouseY)) switchStage("highscore");
         }
             
@@ -142,7 +152,186 @@ public class StageManager {
         }
     };
     
+    Stage death = new Stage() {
+        private RectangleObject background;
+        
+        public void awakeFn() {
+            super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/death.png");
+        }
+        
+        public void update() {
+            // navigate back to menu when clicked
+            if (!(mouseDown && mouseButton == PConstants.LEFT)) return;
+            if (background.withinInBounds(mouseX, mouseY)) switchStage("menu");
+        }
+        
+        public void draw() {
+            background.draw();
+        }
+    };
+    
+    Stage intro = new Stage() {
+        private RectangleObject background;
+        private Actor emperor, ox, rat, cat;
+        private int state = 0;
+        
+        public void awakeFn() {
+            state = 0;
+            super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/nakayamaTrackWithWater.png");
+            
+            emperor = new Actor(app, "Assets/Characters/Character.PNG", 0, -1000, -1000, 0);
+            ox = new Actor(app, "Assets/Characters/ox.png", 0, -1000, -1000, 0);
+            rat = new Actor(app, "Assets/Characters/rat.png", 0, -1000, -1000, 0);
+            cat = new Actor(app, "Assets/Characters/cat.png", 0, -1000, -1000, 0);
+        }
+        
+        public void update() {
+            switch(state) {
+                case 0:
+                    emperor.moveToInstant(200, 400);
+                    rat.moveToInstant(600, 500);
+                    cat.moveToInstant(600, 300);
+                    break;
+                case 4:
+                    emperor.moveToInstant(-1000, -1000);
+                    ox.moveToInstant(200, 400);
+                    break;
+                case 11:
+                    switchStage("combat1");
+            }
+            
+            // increment state
+            if (!(mouseDown && mouseButton == PConstants.LEFT) && background.withinInBounds(mouseX, mouseY)) {
+                if (!clickSwitch) {
+                    clickSwitch = true;
+                    state++;
+                }
+            }
+        }
+        
+        public void draw() {
+            background.draw();
+            emperor.draw();
+            rat.draw();
+            cat.draw();
+            ox.draw();
+            
+            switch(state) {
+                case 1:
+                    app.textAlign(PConstants.CENTER);
+                    app.fill(0);
+                    app.textSize(20);
+                    app.text("Jade Emperor: I'm holding a great race and \nI will decide the order of the 12 Months on the results.", 400, 750);
+                    break;
+                case 2:
+                    app.text("Cat & Rat: Heh you know what I'm thinking right?", 400, 750);
+                    break;
+                case 3:
+                    app.text("Jade Emperor: The track is a 2800m (Long) Right-Handed Swim track, \ngood luck to all contestants.", 400, 750);
+                    break;
+                case 4:
+                    app.text("Rat: Hey Ox let us ride your back", 400, 750);
+                    break;
+                case 5:
+                    app.text("Ox: Hell no", 400, 750);
+                    break;
+                case 7:
+                    app.text("Rat: Why.", 400, 750);
+                    break;
+                case 8:
+                    app.text("Ox: Hell no", 400, 750);
+                    break;
+                case 10:
+                    app.text("Rat: Too bad.", 400, 750);
+                    break;
+            }
+        }
+    };
+    
+    Stage intermission1 = new Stage() {
+        private RectangleObject background;
+        private Actor rabbit, ox, rat, cat;
+        private int state = 0;
+        
+        public void awakeFn() {
+            state = 0;
+            super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/water.png");
+            
+            rabbit = new Actor(app, "Assets/Characters/rabbit.png", 0, -1000, -1000, 0);
+            ox = new Actor(app, "Assets/Characters/ox.png", 0, -1000, -1000, 0);
+            rat = new Actor(app, "Assets/Characters/rat.png", 0, -1000, -1000, 0);
+            cat = new Actor(app, "Assets/Characters/cat.png", 0, -1000, -1000, 0);
+        }
+        
+        public void update() {
+            switch(state) {
+                case 0:
+                    ox.moveToInstant(400, 600);
+                    rat.moveToInstant(400, 300);
+                    cat.moveToInstant(400, 500);
+                    break;
+                case 4:
+                    rabbit.moveToInstant(400, 200);
+                    break;
+                case 11:
+                    switchStage("combat1");
+            }
+            
+            // increment state
+            if (!(mouseDown && mouseButton == PConstants.LEFT) && background.withinInBounds(mouseX, mouseY)) {
+                if (!clickSwitch) {
+                    clickSwitch = true;
+                    state++;
+                }
+            }
+        }
+        
+        public void draw() {
+            ox.draw();
+            cat.draw();
+            rat.draw();
+        }
+    };
+    
+    Stage intermission2 = new Stage() {
+        public void awakeFn() {
+            
+        }
+        
+        public void update() {
+            
+        }
+        
+        public void draw() {
+            
+        }
+    };
+    
+    Stage ending = new Stage() {
+        public void awakeFn() {
+            
+        }
+        
+        public void update() {
+            
+        }
+        
+        public void draw() {
+            
+        }
+    };
+    
     Stage combat1 = new Stage() {
+        private RectangleObject background;
         private Actor stageBoss;
         private BulletPool bossBullets;
         private Actor player;
@@ -236,14 +425,24 @@ public class StageManager {
         }
         
         public void awakeFn() {
+            if (stageBoss != null)
+                stageBoss.setHealth(10000);
+            
             super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/grass.png");
             
             stageBoss = new Actor(app, "Assets/Characters/ox.png", 10000, 200, 200, 300);
             stageBoss.addStage(0.7);
             stageBoss.addStage(0.3);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+                public void deathHook() {
+                    switchStage("death");
+                }
+            };
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -255,7 +454,7 @@ public class StageManager {
                 case 1: pattern1(); break;
                 case 2: pattern2(); break;
                 case 3: pattern3(); break;
-                case 4: switchStage("combat2");
+                case 4: switchStage("intermission1");
             }
             
             // inputs
@@ -311,6 +510,7 @@ public class StageManager {
         }
         
         public void draw() {
+            background.draw();
             stageBoss.draw();
             player.draw();
             player.drawHitbox();
@@ -320,6 +520,7 @@ public class StageManager {
     };
     
     Stage combat2 = new Stage() {
+        private RectangleObject background;
         private Actor stageBoss;
         private BulletPool bossBullets;
         private Actor player;
@@ -426,14 +627,24 @@ public class StageManager {
         }
         
         public void awakeFn() {
+            if (stageBoss != null)
+                stageBoss.setHealth(25000);
+            
             super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/water.png");
             
             stageBoss = new Actor(app, "Assets/Characters/rabbit.png", 25000, 400, 200, 100);
             stageBoss.addStage(0.8);
             stageBoss.addStage(0.4);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+                public void deathHook() {
+                    switchStage("death");
+                }
+            };
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -502,6 +713,7 @@ public class StageManager {
         }
         
         public void draw() {
+            background.draw();
             stageBoss.draw();
             player.draw();
             player.drawHitbox();
@@ -511,6 +723,7 @@ public class StageManager {
     };
     
     Stage combat3 = new Stage() {
+        private RectangleObject background;
         private Actor stageBoss;
         private BulletPool bossBullets;
         private Actor player;
@@ -717,7 +930,13 @@ public class StageManager {
         }
         
         public void awakeFn() {
+            if (stageBoss != null)
+                stageBoss.setHealth(50000);
+            
             super.awakeFn();
+            
+            background = new RectangleObject(app, 400, 400);
+            background.setImage("Assets/Backgrounds/water.png");
             
             stageBoss = new Actor(app, "Assets/Characters/cat.png", 50000, 400, 200, 100);
             stageBoss.addStage(0.95);
@@ -728,7 +947,11 @@ public class StageManager {
             stageBoss.addStage(0.1);
             stageBoss.addStage(0);
             
-            player = new Actor(app, "Assets/Characters/rat.png", 10, 400, 600, 10);
+            player = new Actor(app, "Assets/Characters/rat.png", 3, 400, 600, 10) {
+                public void deathHook() {
+                    switchStage("death");
+                }
+            };
             player.setSpeed(6);
             
             bossBullets = new BulletPool(app);
@@ -802,6 +1025,7 @@ public class StageManager {
         }
         
         public void draw() {
+            background.draw();
             stageBoss.draw();
             player.draw();
             player.drawHitbox();

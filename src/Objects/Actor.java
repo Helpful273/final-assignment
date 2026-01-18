@@ -87,6 +87,14 @@ public class Actor extends MovingObject {
     }
     
     /*
+    Sets the new health of the actor.
+    @param health the new health
+    */
+    public void setHealth(int health) {
+        this.health = health;
+    }
+    
+    /*
     an event that activates on death.
     */
     public void deathHook() {

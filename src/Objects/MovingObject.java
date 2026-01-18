@@ -14,7 +14,7 @@ public class MovingObject {
     "x" pixels per frame at 60 frames per second.
     */
     public final static int[] DEFAULT_VECTOR = {5, 0};
-    private final static int DEFAULT_COLOUR = 100;
+    private final static int DEFAULT_COLOUR = 255;
     
     // position
     public int x, y;
